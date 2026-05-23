@@ -62,3 +62,12 @@ func createDefaultProfile(path string) error {
 
 	return os.WriteFile(path, data, 0644)
 }
+
+func saveProfile(path string, profile Profile) error {
+	data, err := yaml.Marshal(profile)
+	if err != nil {
+		return err
+	}
+
+	return os.WriteFile(path, data, 0644)
+}
