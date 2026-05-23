@@ -11,6 +11,7 @@ type Client struct {
 	conn    net.Conn
 	logFile *os.File
 	logging bool
+	profile Profile
 }
 
 func (c *Client) connect(host, port string) {
@@ -65,6 +66,8 @@ func (c *Client) sendToMud(line string) {
 		fmt.Println("Not connected. Use /connect <host> <port>.")
 		return
 	}
+
+	line = c.expandAlias(line)
 
 	_, err := fmt.Fprintln(c.conn, line)
 	if err != nil {
