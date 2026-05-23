@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"io"
 	"net"
@@ -13,10 +14,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	host := os.Args[1]
-	port := os.Args[2]
-
-	address := host + ":" + port
+	address := os.Args[1] + ":" + os.Args[2]
 
 	fmt.Printf("Connecting to %s...\n", address)
 
@@ -25,26 +23,43 @@ func main() {
 		fmt.Println("Connection error:", err)
 		os.Exit(1)
 	}
-
 	defer conn.Close()
 
 	fmt.Println("Connected.")
 
+	go readFromMud(conn)
+
+	readFromKeyboard(conn)
+}
+
+func readFromMud(conn net.Conn) {
 	buffer := make([]byte, 4096)
 
 	for {
 		n, err := conn.Read(buffer)
-
 		if err != nil {
 			if err == io.EOF {
 				fmt.Println("\nDisconnected.")
-				break
+			} else {
+				fmt.Println("\nRead error:", err)
 			}
-
-			fmt.Println("\nRead error:", err)
-			break
+			os.Exit(0)
 		}
 
 		fmt.Print(string(buffer[:n]))
+	}
+}
+
+func readFromKeyboard(conn net.Conn) {
+	scanner := bufio.NewScanner(os.Stdin)
+
+	for scanner.Scan() {
+		line := scanner.Text()
+
+		_, err := fmt.Fprintln(conn, line)
+		if err != nil {
+			fmt.Println("Write error:", err)
+			return
+		}
 	}
 }
