@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"os"
 	"time"
 )
@@ -15,13 +14,13 @@ func (c *Client) toggleLog() {
 			c.logFile = nil
 		}
 
-		fmt.Println("Logging stopped.")
+		c.ui.Println("Logging stopped.")
 		return
 	}
 
 	err := os.MkdirAll("logs", 0755)
 	if err != nil {
-		fmt.Println("Could not create logs directory:", err)
+		c.ui.Println("Could not create logs directory: " + err.Error())
 		return
 	}
 
@@ -29,12 +28,12 @@ func (c *Client) toggleLog() {
 
 	logFile, err := os.Create(filename)
 	if err != nil {
-		fmt.Println("Could not create log file:", err)
+		c.ui.Println("Could not create log file: " + err.Error())
 		return
 	}
 
 	c.logFile = logFile
 	c.logging = true
 
-	fmt.Println("Logging started:", filename)
+	c.ui.Println("Logging started: " + filename)
 }

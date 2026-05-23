@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"os"
 	"strings"
 )
@@ -23,7 +22,7 @@ func (c *Client) handleClientCommand(line string) {
 
 	case "/connect":
 		if len(fields) != 3 {
-			fmt.Println("Usage: /connect <host> <port>")
+			c.ui.Println("Usage: /connect <host> <port>")
 			return
 		}
 		c.connect(fields[1], fields[2])
@@ -36,20 +35,20 @@ func (c *Client) handleClientCommand(line string) {
 
 	case "/quit":
 		c.close()
-		fmt.Println("Goodbye.")
+		c.ui.Println("Goodbye.")
 		os.Exit(0)
 
 	default:
-		fmt.Println("Unknown Muddle command. Type /help.")
+		c.ui.Println("Unknown Muddle command. Type /help.")
 	}
 }
 
 func (c *Client) showHelp() {
-	fmt.Println("Muddle commands:")
-	fmt.Println("  /connect <host> <port>  Connect to a MUD")
-	fmt.Println("  /alias                  List aliases")
-	fmt.Println("  /alias <name> <value>   Add or update alias")
-	fmt.Println("  /log                    Toggle session logging")
-	fmt.Println("  /quit                   Quit Muddle")
-	fmt.Println("  //command               Send /command to the MUD")
+	c.ui.Println("Muddle commands:")
+	c.ui.Println("  /connect <host> <port>  Connect to a MUD")
+	c.ui.Println("  /alias                  List aliases")
+	c.ui.Println("  /alias <name> <value>   Add or update alias")
+	c.ui.Println("  /log                    Toggle session logging")
+	c.ui.Println("  /quit                   Quit Muddle")
+	c.ui.Println("  //command               Send /command to the MUD")
 }

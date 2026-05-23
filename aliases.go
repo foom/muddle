@@ -34,7 +34,7 @@ func (c *Client) handleAliasCommand(fields []string) {
 	}
 
 	if len(fields) < 3 {
-		fmt.Println("Usage: /alias <name> <value>")
+		c.ui.Println("Usage: /alias <name> <value>")
 		return
 	}
 
@@ -45,22 +45,22 @@ func (c *Client) handleAliasCommand(fields []string) {
 
 	err := saveProfile("profiles/default.yaml", c.profile)
 	if err != nil {
-		fmt.Println("Alias saved in memory, but profile save failed:", err)
+		c.ui.Println("Alias saved in memory, but profile save failed: " + err.Error())
 		return
 	}
 
-	fmt.Printf("Alias added: %s -> %s\n", name, value)
+	c.ui.Println(fmt.Sprintf("Alias added: %s -> %s", name, value))
 }
 
 func (c *Client) listAliases() {
 	if len(c.profile.Aliases) == 0 {
-		fmt.Println("No aliases defined.")
+		c.ui.Println("No aliases defined.")
 		return
 	}
 
-	fmt.Println("Aliases:")
+	c.ui.Println("Aliases:")
 
 	for name, value := range c.profile.Aliases {
-		fmt.Printf("  %s -> %s\n", name, value)
+		c.ui.Println(fmt.Sprintf("  %s -> %s", name, value))
 	}
 }

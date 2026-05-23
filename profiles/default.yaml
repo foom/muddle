@@ -1,0 +1,7 @@
+name: Default
+host: ""
+port: ""
+aliases:
+    j: cheer
+    k: kill commoner
+    muddle: emote muddles around!

@@ -12,25 +12,26 @@ type Client struct {
 	logFile *os.File
 	logging bool
 	profile Profile
+	ui      *TerminalUI
 }
 
 func (c *Client) connect(host, port string) {
 	if c.conn != nil {
-		fmt.Println("Already connected. Use /quit for now.")
+		c.ui.Println("Already connected. Use /quit for now.")
 		return
 	}
 
 	address := host + ":" + port
-	fmt.Printf("Connecting to %s...\n", address)
+	c.ui.Println("Connecting to " + address + "...")
 
 	conn, err := net.Dial("tcp", address)
 	if err != nil {
-		fmt.Println("Connection error:", err)
+		c.ui.Println("Connection error: " + err.Error())
 		return
 	}
 
 	c.conn = conn
-	fmt.Println("Connected.")
+	c.ui.Println("Connected.")
 
 	go c.readFromMud()
 }
@@ -42,9 +43,9 @@ func (c *Client) readFromMud() {
 		n, err := c.conn.Read(buffer)
 		if err != nil {
 			if err == io.EOF {
-				fmt.Println("\nDisconnected.")
+				c.ui.Println("Disconnected.")
 			} else {
-				fmt.Println("\nRead error:", err)
+				c.ui.Println("Read error: " + err.Error())
 			}
 
 			c.conn = nil
@@ -53,7 +54,7 @@ func (c *Client) readFromMud() {
 
 		data := buffer[:n]
 
-		fmt.Print(string(data))
+		c.ui.Print(string(data))
 
 		if c.logging && c.logFile != nil {
 			c.logFile.Write(data)
@@ -63,7 +64,7 @@ func (c *Client) readFromMud() {
 
 func (c *Client) sendToMud(line string) {
 	if c.conn == nil {
-		fmt.Println("Not connected. Use /connect <host> <port>.")
+		c.ui.Println("Not connected. Use /connect <host> <port>.")
 		return
 	}
 
@@ -71,7 +72,7 @@ func (c *Client) sendToMud(line string) {
 
 	_, err := fmt.Fprintln(c.conn, line)
 	if err != nil {
-		fmt.Println("Write error:", err)
+		c.ui.Println("Write error: " + err.Error())
 		return
 	}
 
