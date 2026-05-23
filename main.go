@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"io"
 	"net"
 	"os"
 )
@@ -27,5 +28,23 @@ func main() {
 
 	defer conn.Close()
 
-	fmt.Println("Connected successfully.")
+	fmt.Println("Connected.")
+
+	buffer := make([]byte, 4096)
+
+	for {
+		n, err := conn.Read(buffer)
+
+		if err != nil {
+			if err == io.EOF {
+				fmt.Println("\nDisconnected.")
+				break
+			}
+
+			fmt.Println("\nRead error:", err)
+			break
+		}
+
+		fmt.Print(string(buffer[:n]))
+	}
 }
